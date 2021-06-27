@@ -45,6 +45,7 @@ const addBookHandler = (request, h) => {
     response.code(400);
     return response;
   }
+  /* End Middleware */
 
   books.push(newBook);
 
@@ -68,12 +69,60 @@ const addBookHandler = (request, h) => {
   return response;
 };
 
-const getAllBooksHandler = () => ({
-  status: 'success',
-  data: {
-    books,
-  },
-});
+const getAllBooksHandler = (request, h) => {
+  const { name, reading, finished } = request.query;
+  if (name !== undefined) {
+    const nama = name.toLowerCase();
+    const result = books.filter((v) => v.name.toLowerCase().includes(nama));
+    const response = h.response({
+      status: 'success',
+      message: `Menampilkan Filter berdasarkan Nama= ${name}`,
+      data: {
+        result,
+      },
+    });
+    response.code(201);
+    return response;
+  }
+
+  if (reading !== undefined) {
+    const baca = reading === '1' ? Boolean(true) : Boolean(false);
+    const result = books.filter((book) => book.reading === baca);
+    const response = h.response({
+      status: 'success',
+      message: `Menampilkan Filter berdasarkan Reading= ${baca}`,
+      data: {
+        result,
+      },
+    });
+    response.code(201);
+    return response;
+  }
+
+  if (finished !== undefined) {
+    const finish = finished === '1' ? 'true' : 'false';
+    const result = books.filter((book) => book.finished === finish);
+    const response = h.response({
+      status: 'success',
+      message: `Menampilkan Filter berdasarkan Finished= ${finish}`,
+      data: {
+        result,
+      },
+    });
+    response.code(201);
+    return response;
+  }
+
+  const response = h.response({
+    status: 'success',
+    message: ':: Data All ::',
+    data: {
+      books,
+    },
+  });
+  response.code(200);
+  return response;
+};
 
 const getBookByIdHandler = (request, h) => {
   const { bookId } = request.params;
