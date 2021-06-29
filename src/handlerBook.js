@@ -10,7 +10,7 @@ const addBookHandler = (request, h) => {
   const id = nanoid(16);
   const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
-  const finished = pageCount === readPage ? 'true' : 'false';
+  const finished = pageCount === readPage ? Boolean(true) : Boolean(false);
 
   const newBook = {
     id,
@@ -100,7 +100,7 @@ const getAllBooksHandler = (request, h) => {
   }
 
   if (finished !== undefined) {
-    const finish = finished === '1' ? 'true' : 'false';
+    const finish = finished === '1' ? Boolean(true) : Boolean(false);
     const result = books.filter((book) => book.finished === finish);
     const response = h.response({
       status: 'success',
@@ -113,11 +113,16 @@ const getAllBooksHandler = (request, h) => {
     return response;
   }
 
+  const bookShow = books.map((val) => ({
+    id: val.id,
+    name: val.name,
+    publisher: val.publisher,
+  }));
+
   const response = h.response({
     status: 'success',
-    message: ':: Data All ::',
     data: {
-      books,
+      books: bookShow,
     },
   });
   response.code(200);
@@ -152,7 +157,7 @@ const editBookByIdHandler = (request, h) => {
 
   const updatedAt = new Date().toISOString();
 
-  const finished = pageCount === readPage ? 'true' : 'false';
+  const finished = pageCount === readPage ? Boolean(true) : Boolean(false);
 
   /* Middleware */
   if (!name) {
@@ -219,7 +224,7 @@ const deleteBookByIdHandler = (request, h) => {
   }
   const response = h.response({
     status: 'fail',
-    message: 'Gagal Hapus Data, Id tidak ditemukan',
+    message: 'Buku gagal dihapus. Id tidak ditemukan',
   });
   response.code(404);
   return response;
